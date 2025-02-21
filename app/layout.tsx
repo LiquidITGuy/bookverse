@@ -46,6 +46,26 @@ export default function RootLayout({
             <p>&copy; 2023 BookVerse. All rights reserved.</p>
           </div>
         </footer>
+        <script
+            id="register-sw"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/service-worker.js').then(
+                    (registration) => {
+                      console.log('Service Worker registered with scope:', registration.scope);
+                    },
+                    (err) => {
+                      console.log('Service Worker registration failed:', err);
+                    }
+                  );
+                });
+              }
+            `,
+            }}
+        />
       </body>
     </html>
   )

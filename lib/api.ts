@@ -19,7 +19,9 @@ export async function getBookById(id: string): Promise<OneBook | undefined> {
 
 export async function searchBooks(query: string): Promise<Book[]> {
   const lowercaseQuery = query.toLowerCase()
-  return []
+  const resultBrut = await fetch(BASE_URL+'/livres?filters[titre][$containsi]='+lowercaseQuery)
+  const result = await resultBrut.json()
+  return result.data.map(convertBook)
 }
 
 export function convertBook (book: BookApi): Book {
