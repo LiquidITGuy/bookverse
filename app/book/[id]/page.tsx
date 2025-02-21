@@ -1,9 +1,19 @@
+"use client";
+
 import { getBookById } from "@/lib/api"
 import Image from "next/image"
 import Link from "next/link"
+import {OneBook} from "@/lib/types";
+import {useState} from "react";
 
-export default async function BookDetails({ params }: { params: { id: string } }) {
-  const book = await getBookById(params.id)
+export default function BookDetails({ params }: { params: { id: string } }) {
+  // used if we didnt use use client for server side
+  // we need to add async function into the default export
+  // const book = await getBookById(params.id)
+  const [book, setBook] = useState<OneBook | null | undefined>(null)
+  getBookById(params.id).then((book) => {
+    setBook(book)
+  })
 
   if (!book) {
     return <div className="container mx-auto px-4 py-8 text-center">Book not found</div>
@@ -44,4 +54,3 @@ export default async function BookDetails({ params }: { params: { id: string } }
     </div>
   )
 }
-
