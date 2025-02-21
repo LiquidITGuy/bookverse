@@ -1,4 +1,5 @@
 const CACHE_NAME = "bookverse-cache-v1"
+const API_CACHE_NAME = "livres"
 const urlsToCache = [
     "/",
     "/books",
@@ -16,15 +17,41 @@ self.addEventListener("install", (event) => {
     )
 })
 
+
 self.addEventListener("fetch", (event) => {
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            if (response) {
-                return response
-            }
-            return fetch(event.request)
-        }),
-    )
+    const url = new URL(event.request.url)
+
+    if (url.pathname.startsWith("/api/livres")) {
+        event.respondWith(staleWhileRevalidate(event.request, API_CACHE_NAME))
+    } else if (urlsToCache.includes(url.pathname)) {
+        event.respondWith(
+            caches.match(event.request).then((response) => {
+                if (response) {
+                    return response
+                }
+                return staleWhileRevalidate(event.request, CACHE_NAME)
+            }),
+        )
+    }
+    // Network-first for all other requests
+    else {
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    // If the network request is successful, clone the response
+                    // Store one copy in the cache and return the other
+                    const responseClone = response.clone()
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseClone)
+                    })
+                    return response
+                })
+                .catch(() => {
+                    // If the network request fails, try to get the resource from the cache
+                    return caches.match(event.request)
+                }),
+        )
+    }
 })
 
 self.addEventListener("activate", (event) => {
@@ -40,4 +67,17 @@ self.addEventListener("activate", (event) => {
             )
         }),
     )
+    event.waitUntil(self.clients.claim());
 })
+
+function staleWhileRevalidate(request, cacheName) {
+    return caches.open(cacheName).then((cache) => {
+        return cache.match(request).then((response) => {
+            const fetchPromise = fetch(request).then((networkResponse) => {
+                cache.put(request, networkResponse.clone())
+                return networkResponse
+            })
+            return response || fetchPromise
+        })
+    })
+}
