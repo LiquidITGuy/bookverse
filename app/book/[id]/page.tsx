@@ -1,19 +1,25 @@
 "use client";
+import {
+  BlocksRenderer,
+  type BlocksContent,
+} from "@strapi/blocks-react-renderer";
 
 import { getBookById } from "@/lib/api"
 import Image from "next/image"
 import Link from "next/link"
 import {OneBook} from "@/lib/types";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 export default function BookDetails({ params }: { params: { id: string } }) {
   // used if we didnt use use client for server side
   // we need to add async function into the default export
   // const book = await getBookById(params.id)
   const [book, setBook] = useState<OneBook | null | undefined>(null)
-  getBookById(params.id).then((book) => {
-    setBook(book)
-  })
+  useEffect(() => {
+    getBookById(params.id).then((book) => {
+      setBook(book)
+    })
+  }, [])
 
   if (!book) {
     return <div className="container mx-auto px-4 py-8 text-center">Book not found</div>
@@ -44,7 +50,11 @@ export default function BookDetails({ params }: { params: { id: string } }) {
             <ul className="space-y-4">
               {book.comments.map((comment, index) => (
                 <li key={index} className="bg-purple-100 p-4 rounded-lg">
-                  <p className="text-gray-800">{comment}</p>
+                  <p className="text-gray-800">{comment.auteur}</p>
+                  <p className="text-gray-800">{new Date(comment.createdAt).toLocaleDateString()}</p>
+                  <p className="text-gray-800 text-right">{
+                    <BlocksRenderer content={comment.contenu} />
+                  }</p>
                 </li>
               ))}
             </ul>

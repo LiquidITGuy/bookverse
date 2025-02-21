@@ -7,7 +7,11 @@ export interface Book {
 
 export interface OneBook extends Book{
   summary: string
-  comments: string[]
+  comments: Array<{
+      auteur: string,
+      contenu: Array<any>
+      createdAt: string,
+  }>
 }
 
 export interface BookApi {
@@ -19,16 +23,21 @@ export interface BookApi {
             url: string,
           },
         }
-      }
-  >,
+      }>,
   auteur: string,
   created_at:string,
   id: number
+  documentId: number
   isbn: string
   published_at: string
   titre: string
   updated_at: string
 }
 export interface OneBookApi extends BookApi {
- description: string
+    description: string
+    commentaires: Array<{
+        auteur: string,
+        contenu: Array<any>
+        createdAt: string,
+    }>
 }
