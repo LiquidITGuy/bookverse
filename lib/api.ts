@@ -8,7 +8,7 @@ export async function getBooks(page: number): Promise<{ books: Book[]; totalPage
 
   const resultBrut = await fetch(BASE_URL+'/livres')
   const result = await resultBrut.json()
-  return {books: result.data.map(convertBook), totalPages: result.meta.pageCount }
+  return {books: result.data.map(convertBook), totalPages: result.meta.pagination.pageCount }
   }
 
 export async function getBookById(id: string): Promise<OneBook | undefined> {
