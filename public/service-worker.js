@@ -2,10 +2,14 @@ const CACHE_NAME = "bookverse-cache-v1"
 const API_CACHE_NAME = "livres"
 const urlsToCache = [
     "/",
-    "/books",
-    "/search",
-    "/placeholder.svg",
-
+    "/index.html",
+    "/offline.html",
+    "/static/js/main.chunk.js",
+    "/static/js/0.chunk.js",
+    "/static/js/bundle.js",
+    "/static/css/main.chunk.css",
+    "/manifest.json",
+    "/favicon.ico",
     // Add other static assets here
 ]
 
@@ -20,7 +24,10 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("fetch", (event) => {
     const url = new URL(event.request.url)
-
+    console.log(url.pathname)
+/*    if (url.pathname.startsWith("/search")) {
+        event.respondWith(staleWhileRevalidate(event.request, API_CACHE_NAME))
+    }*/
     if (url.pathname.startsWith("/api/livres")) {
         event.respondWith(staleWhileRevalidate(event.request, API_CACHE_NAME))
     } else if (urlsToCache.includes(url.pathname)) {
