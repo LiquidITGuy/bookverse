@@ -4,7 +4,7 @@ import type { Book } from "@/lib/types"
 
 export default function BookList({ books }: { books: Book[] }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div data-testid="booklist" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       {books.map((book) => (
         <div
           key={book.id}
@@ -32,4 +32,3 @@ export default function BookList({ books }: { books: Book[] }) {
     </div>
   )
 }
-
