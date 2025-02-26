@@ -3,8 +3,12 @@
 import { useState, useEffect } from "react"
 
 export default function OnlineStatusIndicator() {
-    const [isOnline, setIsOnline] = useState(window.navigator.onLine)
+    const [isOnline, setIsOnline] = useState(true)
 
+    useEffect(() => {
+        setIsOnline(window.navigator.onLine)
+
+    }, []);
     useEffect(() => {
         function handleOnline() {
             setIsOnline(true)
