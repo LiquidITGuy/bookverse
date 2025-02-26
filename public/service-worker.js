@@ -4,6 +4,9 @@ const urlsToCache = [
     "/",
     "/offline.html",
     "/manifest.json",
+    "/search",
+    "/books",
+    "/book/1"
     // Add other static assets here
 ]
 
@@ -19,9 +22,16 @@ self.addEventListener("install", (event) => {
 self.addEventListener("fetch", (event) => {
     const url = new URL(event.request.url)
     console.log(url.pathname)
-/*    if (url.pathname.startsWith("/search")) {
-        event.respondWith(staleWhileRevalidate(event.request, API_CACHE_NAME))
-    }*/
+    if (url.pathname.startsWith("/search")) {
+        event.respondWith(caches.open(CACHE_NAME).then((cache) => {
+            cache.match('/search').then((result) => {
+                cache.put(url.pathname, result).then(() => {
+                    debugger
+                    return cache.match(url.pathname)
+                })
+            })
+        }))
+    }
     if (url.pathname.startsWith("/api/livres")) {
         event.respondWith(staleWhileRevalidate(event.request, API_CACHE_NAME))
     } else if (urlsToCache.includes(url.pathname)) {
