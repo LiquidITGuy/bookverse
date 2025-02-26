@@ -6,7 +6,7 @@ const BOOKS_PER_PAGE = 6
 
 export async function getBooks(page: number): Promise<{ books: Book[]; totalPages: number }> {
 
-  const resultBrut = await fetch(BASE_URL+'/livres')
+  const resultBrut = await fetch(BASE_URL+'/livres?pagination[page]='+ page+'&pagination[pageSize]='+BOOKS_PER_PAGE)
   const result = await resultBrut.json()
   return {books: result.data.map(convertBook), totalPages: result.meta.pagination.pageCount }
   }

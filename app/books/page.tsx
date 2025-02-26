@@ -1,7 +1,7 @@
 "use client";
 import BookList from "@/components/BookList"
 import Pagination from "@/components/Pagination"
-    import {getBookById, getBooks} from "@/lib/api"
+import {getBooks} from "@/lib/api"
 import {Book} from "@/lib/types";
 import {useEffect, useState} from "react";
 
@@ -17,7 +17,7 @@ export default function BooksPage({ searchParams }: { searchParams: { page?: str
             setBooks(books)
             setTotalPages(totalPages)
         })
-    }, [])
+    }, [currentPage]) //curentPage ?
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-purple-600">Our Book Collection</h1>
