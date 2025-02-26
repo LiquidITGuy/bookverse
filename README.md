@@ -1,2 +1,2 @@
 # bookverse
-des informations sur les livres (demo pwa)
+Des informations sur les livres (demo pwa)
