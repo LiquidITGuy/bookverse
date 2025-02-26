@@ -6,7 +6,6 @@ import {FormEvent, useEffect, useState} from "react";
 import {Book} from "@/lib/types";
 
 export default function SearchPage({ searchParams }: { searchParams: { query?: string } }) {
-    const query = searchParams.query || ""
     const [books, setBooks] = useState<Book[]>([])
     const [value, setValue] = useState<String>(searchParams.query || '')
     useEffect(() => {
@@ -18,7 +17,9 @@ export default function SearchPage({ searchParams }: { searchParams: { query?: s
             setBooks([])
          return
         }
-        searchBooks(value).then(setBooks)
+        searchBooks(value).then((value) => {
+            setBooks(value)
+        })
     }, [value]);
 
     const doNothing = (e: FormEvent<HTMLFormElement>) => {
@@ -46,7 +47,7 @@ export default function SearchPage({ searchParams }: { searchParams: { query?: s
                     Search
                 </button>
             </form>
-            {query && <BookList books={books} />}
+            {value && <BookList books={books} />}
         </div>
     )
 }
