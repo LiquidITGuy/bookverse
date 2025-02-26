@@ -5,6 +5,7 @@ const urlsToCache = [
     "/offline.html",
     "/manifest.json",
     "/search",
+    "/search?query=",
     "/books",
     "/book/1"
     // Add other static assets here
@@ -20,19 +21,24 @@ self.addEventListener("install", (event) => {
 
 
 self.addEventListener("fetch", (event) => {
+    
+    if(event.request.url.includes('chrome-extension')){
+        // renvoie le résultat de notre requete
+        return fetch(event.request);
+    }
+    
     const url = new URL(event.request.url)
     console.log(url.pathname)
-    if (url.pathname.startsWith("/search")) {
+    
+   /* if (url.pathname.startsWith("/search")) {
         event.respondWith(caches.open(CACHE_NAME).then((cache) => {
             cache.match('/search').then((result) => {
-                cache.put(url.pathname, result).then(() => {
-                    debugger
+                cache.put(url.pathname, result.clone()).then(() => {
                     return cache.match(url.pathname)
                 })
             })
         }))
-    }
-    if (url.pathname.startsWith("/api/livres")) {
+    } else */if (url.pathname.startsWith("/api/livres")) {
         event.respondWith(staleWhileRevalidate(event.request, API_CACHE_NAME))
     } else if (urlsToCache.includes(url.pathname)) {
         event.respondWith(
@@ -46,6 +52,7 @@ self.addEventListener("fetch", (event) => {
     }
     // Network-first for all other requests
     else {
+        //console.count('localFirstReached')
         event.respondWith(
             fetch(event.request)
                 .then((response) => {
@@ -58,6 +65,7 @@ self.addEventListener("fetch", (event) => {
                     return response
                 })
                 .catch(() => {
+                    //console.count('cache localFirstReached')
                     // If the network request fails, try to get the resource from the cache
                     return caches.match(event.request)
                 }),
